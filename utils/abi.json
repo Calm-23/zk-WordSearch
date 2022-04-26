@@ -1,0 +1,31 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint8[4][4]",
+        "name": "ogGrid",
+        "type": "uint8[4][4]"
+      },
+      {
+        "internalType": "uint8[4][4]",
+        "name": "subGrid",
+        "type": "uint8[4][4]"
+      },
+      {
+        "internalType": "uint8[4]",
+        "name": "word",
+        "type": "uint8[4]"
+      }
+    ],
+    "name": "verifyProof",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "r",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
