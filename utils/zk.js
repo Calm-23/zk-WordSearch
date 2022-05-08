@@ -54,9 +54,9 @@ async function exportCallDataGroth16(input, wasmPath, zkeyPath) {
   return [a, b, c, Input];
 }
 
-export async function getCalldata(ogGrid, subGrid, word) {
+export async function getCalldata(ogGrid, selectedGrid, subGrid, selectedWord, word) {
   const input = {
-    ogGrid, subGrid, word
+    ogGrid, selectedGrid, subGrid, selectedWord, word
   };
 
   console.log(input);

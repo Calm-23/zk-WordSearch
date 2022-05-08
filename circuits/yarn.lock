@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-circomlib-matrix@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/circomlib-matrix/-/circomlib-matrix-1.0.1.tgz#0517b721bc4581a4829d4cf20d9c919e1e4fbb20"
-  integrity sha512-o+w7ENkvrey+MjRIuXnjJz7yDdv7Kw50R6HmYNpjNLs90rCwvD1vebArWYn+eNRI1IOJQ2rW9NMwE2TMOod5fg==
-
 circomlib@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/circomlib/-/circomlib-2.0.3.tgz#88816e22f269ba491f47c825a2e238d14fd0e877"

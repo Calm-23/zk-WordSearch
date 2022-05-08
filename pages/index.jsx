@@ -11,9 +11,16 @@ import {
 import { RepeatIcon } from '@chakra-ui/icons';
 import { rword } from 'rword';
 import React from 'react';
-import { useProvider, useContract } from 'wagmi';
+import {
+  useSigner,
+  useContract,
+  useConnect,
+  useAccount,
+  useDisconnect,
+} from 'wagmi';
 import address from '../utils/address.json';
 import abi from '../utils/abi.json';
+import { getCalldata } from '../utils/zk';
 
 function IndexPage() {
   const [matrix, setMatrix] = React.useState([]);
@@ -39,32 +46,67 @@ function IndexPage() {
     generateWord();
   }, []);
 
-  const provider = useProvider();
+  const { connectAsync, connectors } = useConnect();
+  const {
+    data: accountData,
+    // isError: accountError,
+    // isLoading: accountLoading,
+  } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { data: signerData } = useSigner();
 
   const contract = useContract({
     addressOrName: address.address,
     contractInterface: abi,
-    signerOrProvider: provider,
+    signerOrProvider: signerData,
   });
 
   const onSubmit = async () => {
-    const ogMatrix = Array(4);
-    for (let i = 0; i < 4; i++) ogMatrix[i] = Array(4);
+    if (!accountData) {
+      return;
+    }
+    const ogGrid = Array(4);
+    for (let i = 0; i < 4; i++) ogGrid[i] = Array(4);
 
-    const subMatrix = Array(4);
-    for (let i = 0; i < 4; i++) subMatrix[i] = Array(4).fill(0);
+    const selectedGrid = Array(4);
+    for (let i = 0; i < 4; i++) selectedGrid[i] = Array(4).fill(0);
 
-    for (let i = 0; i < 16; i++) ogMatrix[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
-    for (let i = 0; i < 4; i++) subMatrix[selectedRow][i] = 1;
+    const subGrid = Array(4);
+    for (let i = 0; i < 4; i++) subGrid[i] = Array(4).fill(0);
+
+    for (let i = 0; i < 16; i++) {
+      ogGrid[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
+    }
+    for (let i = 0; i < 4; i++) {
+      selectedGrid[selectedRow][i] = ogGrid[selectedRow][i];
+      subGrid[selectedRow][i] = 1;
+    }
 
     const wordMatrix = Array(4);
-    for (let i = 0; i < 4; i++) wordMatrix[i] = word[i].charCodeAt(0) - 32;
+    const selectedWord = Array(4);
+    for (let i = 0; i < 4; i++) {
+      wordMatrix[i] = word[i].charCodeAt(0) - 32;
+      selectedWord[i] = matrix[selectedRow * 4 + i].charCodeAt(0) - 32;
+    }
 
-    console.log(ogMatrix);
-    console.log(subMatrix);
+    console.log(ogGrid);
+    console.log(selectedGrid);
+    console.log(subGrid);
+    console.log(selectedWord);
     console.log(wordMatrix);
 
-    contract.verifyProof();
+    const calldata = await getCalldata(ogGrid, selectedGrid, subGrid, selectedWord, wordMatrix);
+    if (calldata) {
+      console.log(calldata);
+      console.log(await signerData.provider.getCode(address.address));
+      const result = await contract.verifyProof(
+        calldata[0],
+        calldata[1],
+        calldata[2],
+        calldata[3],
+      );
+      console.log(result);
+    }
   };
 
   const refresh = () => {
@@ -148,6 +190,13 @@ function IndexPage() {
             {word.toUpperCase()}
           </Text>
         </Flex>
+        <Button onClick={async () => {
+          if (accountData?.address) disconnect();
+          else await connectAsync(connectors[0]);
+        }}
+        >
+          {accountData?.address ? 'Disconnect' : 'Connect'}
+        </Button>
       </Flex>
     </Flex>
   );
