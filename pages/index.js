@@ -1,100 +1,144 @@
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
-import React from "react";
-import { addCalldata, multiplyCalldata } from "../utils/zk";
-import addresses from "../utils/address.json";
-import abi from "../utils/abi.json";
 import {
-  useAccount,
-  useConnect,
-  useContract,
-  useProvider,
-  useSigner,
-  useNetwork,
-  useDisconnect,
-} from "wagmi";
-var randomWords = require('random-words');
+  Grid,
+  GridItem,
+  Button,
+  Heading,
+  Flex,
+  Text,
+  IconButton,
+  CircularProgress,
+} from "@chakra-ui/react";
+import { RepeatIcon } from "@chakra-ui/icons";
+import { rword } from "rword";
+import React from "react";
 
-function Home() {
-  const {
-    connect,
-    connectors,
-    error: connectError,
-    isConnecting,
-    pendingConnector,
-  } = useConnect();
-  const { data: accountData, isError, isLoading } = useAccount();
-  const { data: networkData, error: networkError, loading } = useNetwork();
-  const { disconnect } = useDisconnect();
+const IndexPage = () => {
+  const [matrix, setMatrix] = React.useState([]);
+  const [word, setWord] = React.useState("");
+  const [selectedRow, setSelectedRow] = React.useState(-1);
 
-  // const [loadingVerifyBtn, setLoadingVerifyBtn] = useState(false);
-  // const [loadingVerifyAndMintBtn, setLoadingVerifyAndMintBtn] = useState(false);
-  // const [loadingStartGameBtn, setLoadingStartGameBtn] = useState(false);
+  const [loading, setLoading] = React.useState(true);
 
-  const {
-    data: signerData,
-    isError: isSignerError,
-    isLoading: isSignerLoading,
-  } = useSigner();
+  const generateWord = () => {
+    setLoading(true);
+    const words = rword.generate(4, { length: 4 });
+    const index = Math.floor(Math.random() * 4);
 
-  const provider = useProvider();
+    setWord(words[index]);
+    const arr = Array(16);
+    for (let i = 0; i < 16; ++i) arr[i] = words[Math.floor(i / 4)][i % 4];
+    setMatrix(arr);
 
-  const contract = useContract({
-    addressOrName: addresses.address,
-    contractInterface: abi,
-    signerOrProvider: signerData || provider,
-  });
-
-  const contractNoSigner = useContract({
-    addressOrName: addresses.address,
-    contractInterface: abi,
-    signerOrProvider: provider,
-  });
-
-  const DEFAULT_OG =
-    [[122, 107, 117, 109],
-    [63, 111, 64, 65],
-    [120, 114, 116, 98],
-    [106, 115, 112, 102]];
-  const [ogGrid, setOgGrid] = React.useState(DEFAULT_OG);
-
-  const DEFAULT = [[false, false, false, false], [false, false, false, false], [false, false, false, false], [false, false, false, false]];
-  const [selected, setSelected] = React.useState(DEFAULT);
-
-
-  const generate = async () => {
-    console.log('Contract: ', addresses);
-    let randomWord;
-    do {
-      randomWord = randomWords({ exactly: 1, maxLength: 4 });
-      if (randomWord[0].length === 4) break;
-    } while (true);
-    console.log('Word:', randomWord);
-    var answer = [];
-    for (let i = 0; i < 4; i++) {
-      answer[i] = randomWord[0].charCodeAt(i);
-    }
-    console.log('ASCII:', answer);
-    let max = 122;
-    let min = 97;
-
-    let selectedRow = Math.floor(Math.random() % 4);
-    console.log("Selected Row :", selectedRow);
-    var grid = new Array(4).fill(0).map(() => new Array(4).fill(0));
-    for (let i = 0; i < 4; i++) {
-      for (let j = 0; j < 4; j++) {
-        let random = Math.floor(Math.random() * (max - min)) + min;
-        if (i == selectedRow)
-          grid[i][j] = answer[j];
-        else
-          grid[i][j] = random;
-      }
-    }
-    console.log("Grid:", grid);
+    setLoading(false);
   };
 
-  return (
-    <Button onClick={generate}>Generate</Button>
-  );
-}
+  React.useEffect(() => {
+    generateWord();
+  }, []);
 
-export default Home;
+  const onSubmit = async () => {
+    const ogMatrix = Array(4);
+    for (let i = 0; i < 4; ++i) ogMatrix[i] = Array(4);
+
+    const subMatrix = Array(4);
+    for (let i = 0; i < 4; ++i) subMatrix[i] = Array(4).fill(0);
+
+    for (let i = 0; i < 16; ++i)
+      ogMatrix[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
+    for (let i = 0; i < 4; ++i) subMatrix[selectedRow][i] = 1;
+
+    const wordMatrix = Array(4);
+    for (let i = 0; i < 4; ++i) wordMatrix[i] = word[i].charCodeAt(0) - 32;
+
+    console.log(ogMatrix);
+    console.log(subMatrix);
+    console.log(wordMatrix);
+  };
+
+  const refresh = () => {
+    setSelectedRow(-1);
+    generateWord();
+  };
+
+  React.useEffect(() => {
+    console.log("Selected row:", selectedRow);
+  }, [selectedRow]);
+
+  return (
+    <Flex w="100%" h="100vh">
+      <Flex w="70%" direction="column" justify="center" align="stretch" mx={16}>
+        <Heading textAlign="center">Unsolved Grid</Heading>
+        {!loading ? (
+          <Grid templateColumns="repeat(4, 1fr)" gap={6} mt={8}>
+            {matrix.map((item, i) => (
+              <GridItem
+                onClick={() => {
+                  setSelectedRow(Math.floor(i / 4));
+                }}
+                key={i}
+                w="90%"
+                h="72px"
+                bg={selectedRow === Math.floor(i / 4) ? "#319795" : "#81E6D9"}
+                border="1px solid #2C7A7B"
+                boxSizing="border-box"
+                boxShadow="0px 2px 0px #2C7A7B"
+                borderRadius="8px"
+              >
+                <Text my={2} fontSize="36px" textAlign="center">
+                  {item.toUpperCase()}
+                </Text>
+              </GridItem>
+            ))}
+          </Grid>
+        ) : (
+          <CircularProgress />
+        )}
+        <Flex mt={8} justify="center" align="center">
+          <Button
+            disabled={selectedRow === -1}
+            minW="150px"
+            h="48px"
+            p="4px"
+            border="1px solid #2C7A7B"
+            boxSizing="border-box"
+            boxShadow="0px 2px 0px #2C7A7B"
+            borderRadius="8px"
+            bg="white"
+            _hover={{ bg: "#81E6D9" }}
+            fontSize="24px"
+            onClick={onSubmit}
+          >
+            Submit
+          </Button>
+          <IconButton
+            ml={4}
+            icon={<RepeatIcon />}
+            onClick={refresh}
+            bg="white"
+          />
+        </Flex>
+      </Flex>
+      <Flex w="30%" direction="column" justify="center" align="center">
+        <Heading textAlign="center">Word</Heading>
+        <Flex
+          h="20%"
+          w="60%"
+          direction="column"
+          justify="center"
+          align="center"
+          m={8}
+          border="1px solid #2C7A7B"
+          boxSizing="border-box"
+          boxShadow="0px 2px 0px #2C7A7B"
+          borderRadius="8px"
+        >
+          <Text textAlign="center" fontSize="36px">
+            {word.toUpperCase()}
+          </Text>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default IndexPage;

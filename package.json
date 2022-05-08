@@ -9,17 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^1.1.7",
     "@chakra-ui/react": "^1.8.8",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@fontsource/berkshire-swash": "^4.5.7",
     "axios": "^0.27.0",
     "framer-motion": "^6",
-    "next": "12.1.5",
+    "next": "12.1.6",
     "random-words": "^1.1.2",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "snarkjs": "^0.4.16",
-    "wagmi": "^0.3.0"
+    "rword": "^3.2.1",
+    "snarkjs": "^0.4.16"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",
