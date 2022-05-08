@@ -65,9 +65,9 @@ const IndexPage = () => {
   }, [selectedRow]);
 
   return (
-    <Flex w="100%" h="100vh">
+    <Flex w="100%" h="100vh" bg="#FBD38D">
       <Flex w="70%" direction="column" justify="center" align="stretch" mx={16}>
-        <Heading textAlign="center">Unsolved Grid</Heading>
+        <Heading textAlign="center" color="#065666">Unsolved Grid</Heading>
         {!loading ? (
           <Grid templateColumns="repeat(4, 1fr)" gap={6} mt={8}>
             {matrix.map((item, i) => (
@@ -78,13 +78,13 @@ const IndexPage = () => {
                 key={i}
                 w="90%"
                 h="72px"
-                bg={selectedRow === Math.floor(i / 4) ? "#319795" : "#81E6D9"}
-                border="1px solid #2C7A7B"
+                bg={selectedRow === Math.floor(i / 4) ? "#d97e76" : "#e4afa0"}
+                //border="1px solid #7B341E"
                 boxSizing="border-box"
-                boxShadow="0px 2px 0px #2C7A7B"
+                boxShadow="0px 2px 0px #7B341E"
                 borderRadius="8px"
               >
-                <Text my={2} fontSize="36px" textAlign="center">
+                <Text my={2} fontSize="36px" textAlign="center" color="#FFFAF0">
                   {item.toUpperCase()}
                 </Text>
               </GridItem>
@@ -99,13 +99,14 @@ const IndexPage = () => {
             minW="150px"
             h="48px"
             p="4px"
-            border="1px solid #2C7A7B"
+            //border="1px solid #2C7A7B"
             boxSizing="border-box"
             boxShadow="0px 2px 0px #2C7A7B"
             borderRadius="8px"
-            bg="white"
-            _hover={{ bg: "#81E6D9" }}
+            bg="#aacac2"
+            _hover={{ bg: "#678e92" }}
             fontSize="24px"
+            color="#065666"
             onClick={onSubmit}
           >
             Submit
@@ -119,7 +120,7 @@ const IndexPage = () => {
         </Flex>
       </Flex>
       <Flex w="30%" direction="column" justify="center" align="center">
-        <Heading textAlign="center">Word</Heading>
+        <Heading textAlign="center" color="#065666">Word</Heading>
         <Flex
           h="20%"
           w="60%"
@@ -127,12 +128,13 @@ const IndexPage = () => {
           justify="center"
           align="center"
           m={8}
-          border="1px solid #2C7A7B"
+          bg="#678e92"
+          //border="1px solid #2C7A7B"
           boxSizing="border-box"
           boxShadow="0px 2px 0px #2C7A7B"
           borderRadius="8px"
         >
-          <Text textAlign="center" fontSize="36px">
+          <Text textAlign="center" fontSize="36px" color="#EBF8FF">
             {word.toUpperCase()}
           </Text>
         </Flex>
