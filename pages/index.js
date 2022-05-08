@@ -65,7 +65,7 @@ const IndexPage = () => {
   }, [selectedRow]);
 
   return (
-    <Flex w="100%" h="100vh">
+    <Flex w="100%" h="100vh" bg="#C6E3D3">
       <Flex w="70%" direction="column" justify="center" align="stretch" mx={16}>
         <Heading textAlign="center">Unsolved Grid</Heading>
         {!loading ? (
