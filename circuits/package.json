@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "circomlib": "^2.0.3"
+    "circomlib": "^2.0.3",
+    "circomlib-matrix": "^1.0.1"
   }
 }
