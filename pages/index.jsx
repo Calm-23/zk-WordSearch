@@ -11,16 +11,6 @@ import {
 import { RepeatIcon } from '@chakra-ui/icons';
 import { rword } from 'rword';
 import React from 'react';
-import {
-  useSigner,
-  useContract,
-  useConnect,
-  useAccount,
-  useDisconnect,
-} from 'wagmi';
-import address from '../utils/address.json';
-import abi from '../utils/abi.json';
-import { getCalldata } from '../utils/zk';
 
 function IndexPage() {
   const [matrix, setMatrix] = React.useState([]);
@@ -36,7 +26,7 @@ function IndexPage() {
 
     setWord(words[index]);
     const arr = Array(16);
-    for (let i = 0; i < 16; i++) arr[i] = words[Math.floor(i / 4)][i % 4];
+    for (let i = 0; i < 16; ++i) arr[i] = words[Math.floor(i / 4)][i % 4];
     setMatrix(arr);
 
     setLoading(false);
@@ -46,67 +36,22 @@ function IndexPage() {
     generateWord();
   }, []);
 
-  const { connectAsync, connectors } = useConnect();
-  const {
-    data: accountData,
-    // isError: accountError,
-    // isLoading: accountLoading,
-  } = useAccount();
-  const { disconnect } = useDisconnect();
-  const { data: signerData } = useSigner();
-
-  const contract = useContract({
-    addressOrName: address.address,
-    contractInterface: abi,
-    signerOrProvider: signerData,
-  });
-
   const onSubmit = async () => {
-    if (!accountData) {
-      return;
-    }
-    const ogGrid = Array(4);
-    for (let i = 0; i < 4; i++) ogGrid[i] = Array(4);
+    const ogMatrix = Array(4);
+    for (let i = 0; i < 4; ++i) ogMatrix[i] = Array(4);
 
-    const selectedGrid = Array(4);
-    for (let i = 0; i < 4; i++) selectedGrid[i] = Array(4).fill(0);
+    const subMatrix = Array(4);
+    for (let i = 0; i < 4; ++i) subMatrix[i] = Array(4).fill(0);
 
-    const subGrid = Array(4);
-    for (let i = 0; i < 4; i++) subGrid[i] = Array(4).fill(0);
-
-    for (let i = 0; i < 16; i++) {
-      ogGrid[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
-    }
-    for (let i = 0; i < 4; i++) {
-      selectedGrid[selectedRow][i] = ogGrid[selectedRow][i];
-      subGrid[selectedRow][i] = 1;
-    }
+    for (let i = 0; i < 16; ++i) ogMatrix[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
+    for (let i = 0; i < 4; ++i) subMatrix[selectedRow][i] = 1;
 
     const wordMatrix = Array(4);
-    const selectedWord = Array(4);
-    for (let i = 0; i < 4; i++) {
-      wordMatrix[i] = word[i].charCodeAt(0) - 32;
-      selectedWord[i] = matrix[selectedRow * 4 + i].charCodeAt(0) - 32;
-    }
+    for (let i = 0; i < 4; ++i) wordMatrix[i] = word[i].charCodeAt(0) - 32;
 
-    console.log(ogGrid);
-    console.log(selectedGrid);
-    console.log(subGrid);
-    console.log(selectedWord);
+    console.log(ogMatrix);
+    console.log(subMatrix);
     console.log(wordMatrix);
-
-    const calldata = await getCalldata(ogGrid, selectedGrid, subGrid, selectedWord, wordMatrix);
-    if (calldata) {
-      console.log(calldata);
-      console.log(await signerData.provider.getCode(address.address));
-      const result = await contract.verifyProof(
-        calldata[0],
-        calldata[1],
-        calldata[2],
-        calldata[3],
-      );
-      console.log(result);
-    }
   };
 
   const refresh = () => {
@@ -119,9 +64,9 @@ function IndexPage() {
   }, [selectedRow]);
 
   return (
-    <Flex w="100%" h="100vh" bg="#C6E3D3">
+    <Flex w="100%" h="100vh" bg="#FBD38D">
       <Flex w="70%" direction="column" justify="center" align="stretch" mx={16}>
-        <Heading textAlign="center">Unsolved Grid</Heading>
+        <Heading textAlign="center" color="#244b57">Unsolved Grid</Heading>
         {!loading ? (
           <Grid templateColumns="repeat(4, 1fr)" gap={6} mt={8}>
             {matrix.map((item, i) => (
@@ -129,16 +74,16 @@ function IndexPage() {
                 onClick={() => {
                   setSelectedRow(Math.floor(i / 4));
                 }}
-                key={`${i}-${item}`}
+                key={i}
                 w="90%"
                 h="72px"
-                bg={selectedRow === Math.floor(i / 4) ? '#319795' : '#81E6D9'}
-                border="1px solid #2C7A7B"
+                bg={selectedRow === Math.floor(i / 4) ? '#db8276' : '#e4afa0'}
+                // border="1px solid #7B341E"
                 boxSizing="border-box"
-                boxShadow="0px 2px 0px #2C7A7B"
+                boxShadow="0px 2px 0px #7B341E"
                 borderRadius="8px"
               >
-                <Text my={2} fontSize="36px" textAlign="center">
+                <Text my={2} fontSize="36px" textAlign="center" color="#FFFAF0">
                   {item.toUpperCase()}
                 </Text>
               </GridItem>
@@ -153,13 +98,14 @@ function IndexPage() {
             minW="150px"
             h="48px"
             p="4px"
-            border="1px solid #2C7A7B"
+            // border="1px solid #2C7A7B"
             boxSizing="border-box"
             boxShadow="0px 2px 0px #2C7A7B"
             borderRadius="8px"
-            bg="white"
-            _hover={{ bg: '#81E6D9' }}
+            bg="#aacac2"
+            _hover={{ bg: '#678e92' }}
             fontSize="24px"
+            color="#065666"
             onClick={onSubmit}
           >
             Submit
@@ -173,7 +119,7 @@ function IndexPage() {
         </Flex>
       </Flex>
       <Flex w="30%" direction="column" justify="center" align="center">
-        <Heading textAlign="center">Word</Heading>
+        <Heading textAlign="center" color="#244b57">Word</Heading>
         <Flex
           h="20%"
           w="60%"
@@ -181,22 +127,16 @@ function IndexPage() {
           justify="center"
           align="center"
           m={8}
-          border="1px solid #2C7A7B"
+          bg="#afcec4"
+          // border="1px solid #2C7A7B"
           boxSizing="border-box"
           boxShadow="0px 2px 0px #2C7A7B"
           borderRadius="8px"
         >
-          <Text textAlign="center" fontSize="36px">
+          <Text textAlign="center" fontSize="36px" color="#F0FFF4">
             {word.toUpperCase()}
           </Text>
         </Flex>
-        <Button onClick={async () => {
-          if (accountData?.address) disconnect();
-          else await connectAsync(connectors[0]);
-        }}
-        >
-          {accountData?.address ? 'Disconnect' : 'Connect'}
-        </Button>
       </Flex>
     </Flex>
   );
