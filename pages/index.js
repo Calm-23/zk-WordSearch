@@ -7,14 +7,15 @@ import {
   Text,
   IconButton,
   CircularProgress,
-} from "@chakra-ui/react";
-import { RepeatIcon } from "@chakra-ui/icons";
-import { rword } from "rword";
-import React from "react";
+} from '@chakra-ui/react';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { rword } from 'rword';
+import React from 'react';
+import { useProvider, useContract } from 'wagmi';
 
-const IndexPage = () => {
+function IndexPage() {
   const [matrix, setMatrix] = React.useState([]);
-  const [word, setWord] = React.useState("");
+  const [word, setWord] = React.useState('');
   const [selectedRow, setSelectedRow] = React.useState(-1);
 
   const [loading, setLoading] = React.useState(true);
@@ -26,7 +27,7 @@ const IndexPage = () => {
 
     setWord(words[index]);
     const arr = Array(16);
-    for (let i = 0; i < 16; ++i) arr[i] = words[Math.floor(i / 4)][i % 4];
+    for (let i = 0; i < 16; i++) arr[i] = words[Math.floor(i / 4)][i % 4];
     setMatrix(arr);
 
     setLoading(false);
@@ -36,19 +37,26 @@ const IndexPage = () => {
     generateWord();
   }, []);
 
+  const provider = useProvider();
+
+  const addContract = useContract({
+    addressOrName: addresses.addContract,
+    contractInterface: addVerifierABI,
+    signerOrProvider: signerData || provider,
+  });
+
   const onSubmit = async () => {
     const ogMatrix = Array(4);
-    for (let i = 0; i < 4; ++i) ogMatrix[i] = Array(4);
+    for (let i = 0; i < 4; i++) ogMatrix[i] = Array(4);
 
     const subMatrix = Array(4);
-    for (let i = 0; i < 4; ++i) subMatrix[i] = Array(4).fill(0);
+    for (let i = 0; i < 4; i++) subMatrix[i] = Array(4).fill(0);
 
-    for (let i = 0; i < 16; ++i)
-      ogMatrix[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
-    for (let i = 0; i < 4; ++i) subMatrix[selectedRow][i] = 1;
+    for (let i = 0; i < 16; i++) ogMatrix[Math.floor(i / 4)][i % 4] = matrix[i].charCodeAt(0) - 32;
+    for (let i = 0; i < 4; i++) subMatrix[selectedRow][i] = 1;
 
     const wordMatrix = Array(4);
-    for (let i = 0; i < 4; ++i) wordMatrix[i] = word[i].charCodeAt(0) - 32;
+    for (let i = 0; i < 4; i++) wordMatrix[i] = word[i].charCodeAt(0) - 32;
 
     console.log(ogMatrix);
     console.log(subMatrix);
@@ -61,7 +69,7 @@ const IndexPage = () => {
   };
 
   React.useEffect(() => {
-    console.log("Selected row:", selectedRow);
+    console.log('Selected row:', selectedRow);
   }, [selectedRow]);
 
   return (
@@ -78,7 +86,7 @@ const IndexPage = () => {
                 key={i}
                 w="90%"
                 h="72px"
-                bg={selectedRow === Math.floor(i / 4) ? "#319795" : "#81E6D9"}
+                bg={selectedRow === Math.floor(i / 4) ? '#319795' : '#81E6D9'}
                 border="1px solid #2C7A7B"
                 boxSizing="border-box"
                 boxShadow="0px 2px 0px #2C7A7B"
@@ -104,7 +112,7 @@ const IndexPage = () => {
             boxShadow="0px 2px 0px #2C7A7B"
             borderRadius="8px"
             bg="white"
-            _hover={{ bg: "#81E6D9" }}
+            _hover={{ bg: '#81E6D9' }}
             fontSize="24px"
             onClick={onSubmit}
           >
@@ -139,6 +147,6 @@ const IndexPage = () => {
       </Flex>
     </Flex>
   );
-};
+}
 
 export default IndexPage;
