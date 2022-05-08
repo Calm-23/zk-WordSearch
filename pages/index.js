@@ -67,7 +67,7 @@ const IndexPage = () => {
   return (
     <Flex w="100%" h="100vh" bg="#FBD38D">
       <Flex w="70%" direction="column" justify="center" align="stretch" mx={16}>
-        <Heading textAlign="center" color="#065666">Unsolved Grid</Heading>
+        <Heading textAlign="center" color="#244b57">Unsolved Grid</Heading>
         {!loading ? (
           <Grid templateColumns="repeat(4, 1fr)" gap={6} mt={8}>
             {matrix.map((item, i) => (
@@ -78,7 +78,7 @@ const IndexPage = () => {
                 key={i}
                 w="90%"
                 h="72px"
-                bg={selectedRow === Math.floor(i / 4) ? "#d97e76" : "#e4afa0"}
+                bg={selectedRow === Math.floor(i / 4) ? "#db8276" : "#e4afa0"}
                 //border="1px solid #7B341E"
                 boxSizing="border-box"
                 boxShadow="0px 2px 0px #7B341E"
@@ -120,7 +120,7 @@ const IndexPage = () => {
         </Flex>
       </Flex>
       <Flex w="30%" direction="column" justify="center" align="center">
-        <Heading textAlign="center" color="#065666">Word</Heading>
+        <Heading textAlign="center" color="#244b57">Word</Heading>
         <Flex
           h="20%"
           w="60%"
@@ -128,13 +128,13 @@ const IndexPage = () => {
           justify="center"
           align="center"
           m={8}
-          bg="#678e92"
+          bg="#afcec4"
           //border="1px solid #2C7A7B"
           boxSizing="border-box"
           boxShadow="0px 2px 0px #2C7A7B"
           borderRadius="8px"
         >
-          <Text textAlign="center" fontSize="36px" color="#EBF8FF">
+          <Text textAlign="center" fontSize="36px" color="#F0FFF4">
             {word.toUpperCase()}
           </Text>
         </Flex>
