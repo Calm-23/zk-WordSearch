@@ -12,6 +12,8 @@ import { RepeatIcon } from '@chakra-ui/icons';
 import { rword } from 'rword';
 import React from 'react';
 import { useProvider, useContract } from 'wagmi';
+import address from '../utils/address.json';
+import abi from '../utils/abi.json';
 
 function IndexPage() {
   const [matrix, setMatrix] = React.useState([]);
@@ -39,10 +41,10 @@ function IndexPage() {
 
   const provider = useProvider();
 
-  const addContract = useContract({
-    addressOrName: addresses.addContract,
-    contractInterface: addVerifierABI,
-    signerOrProvider: signerData || provider,
+  const contract = useContract({
+    addressOrName: address.address,
+    contractInterface: abi,
+    signerOrProvider: provider,
   });
 
   const onSubmit = async () => {
@@ -61,6 +63,8 @@ function IndexPage() {
     console.log(ogMatrix);
     console.log(subMatrix);
     console.log(wordMatrix);
+
+    contract.verifyProof();
   };
 
   const refresh = () => {
@@ -83,7 +87,7 @@ function IndexPage() {
                 onClick={() => {
                   setSelectedRow(Math.floor(i / 4));
                 }}
-                key={i}
+                key={`${i}-${item}`}
                 w="90%"
                 h="72px"
                 bg={selectedRow === Math.floor(i / 4) ? '#319795' : '#81E6D9'}

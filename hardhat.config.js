@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 require('dotenv').config();
 
 require('@nomiclabs/hardhat-etherscan');
@@ -10,9 +11,7 @@ require('solidity-coverage');
 task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
-  for (const account of accounts) {
-    console.log(account.address);
-  }
+  accounts.forEach((account) => console.log(account));
 });
 
 // You need to export an object to set up your config
