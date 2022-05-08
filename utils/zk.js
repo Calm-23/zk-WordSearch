@@ -71,7 +71,7 @@ export async function getCalldata(ogGrid, selectedGrid, subGrid, selectedWord, w
     );
   } catch (error) {
     // console.log(error);
-    window.alert("Wrong answer");
+    return null;
   }
 
   return dataResult;
