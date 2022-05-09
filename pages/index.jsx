@@ -20,7 +20,7 @@ import {
   useAccount,
   useDisconnect,
 } from 'wagmi';
-import address from '../utils/address.json';
+import {testnetAddress, mainnetAddress} from '../utils/address.ts';
 import abi from '../utils/abi.json';
 import { getCalldata } from '../utils/zk';
 
@@ -59,7 +59,7 @@ function IndexPage() {
   const { data: signerData } = useSigner();
 
   const contract = useContract({
-    addressOrName: address.address,
+    addressOrName: mainnetAddress,
     contractInterface: abi,
     signerOrProvider: signerData,
   });
@@ -75,6 +75,7 @@ function IndexPage() {
     if (!accountData) {
       return;
     }
+    console.log(contract);
     setChecking(true);
     const ogGrid = Array(4);
     for (let i = 0; i < 4; i++) ogGrid[i] = Array(4);
@@ -114,8 +115,6 @@ function IndexPage() {
       wordMatrix,
     );
     if (calldata) {
-      console.log(calldata);
-      console.log(await signerData.provider.getCode(address.address));
       const result = await contract.verifyProof(
         calldata[0],
         calldata[1],
