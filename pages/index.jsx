@@ -20,7 +20,7 @@ import {
   useAccount,
   useDisconnect,
 } from 'wagmi';
-import {testnetAddress, mainnetAddress} from '../utils/address.ts';
+import { mainnetAddress } from '../utils/address.ts';
 import abi from '../utils/abi.json';
 import { getCalldata } from '../utils/zk';
 
